@@ -18,6 +18,8 @@ const makeArgObj = (opts) => {
       // Used to keep track of sections and add them after the argument following them.
       this.sectionReady = false
       this.sectionNext = null
+      // Limits metavars to one occurrence per line even with multiple argument hooks.
+      this.noDoubleMetavar = opts.noDoubleMetavar
 
       // Ensure a period unless 'ensurePeriod' is explicitly false.
       this.parser = new ArgumentParser({ ...opts, description: opts.ensurePeriod !== false && opts.description ? ensurePeriod(opts.description) : opts.description })
@@ -102,6 +104,39 @@ const makeArgObj = (opts) => {
       return args.reduce((l, o) => (o.length > l.length ? o : l), '')
     }
 
+    removeDoubleMetavars(buffer) {
+      // Remove extra metavars if we need to.
+      if (!this.noDoubleMetavar) {
+        return buffer
+      }
+      const multiMetavars = []
+      for (const action of this.parser._actions) {
+        if (action.optionStrings.length < 2 || action.constructor.name !== 'ActionStore') continue
+        const meta = action.metavar == null ? action.dest.toUpperCase() : action.metavar
+        const options = action.optionStrings
+        multiMetavars.push({ meta, options })
+      }
+      // Don't continue if we have no actions with a metavar and multiple options.
+      if (multiMetavars.length === 0) return buffer
+
+      // Iterate over the help buffer and replace matching options.
+      buffer = buffer.map(line => {
+        for (const mmVar of multiMetavars) {
+          const { meta, options } = mmVar
+
+          if (line.indexOf(meta) === -1) continue
+          const noLast = options.slice(0, -1)
+          const matchOpts = noLast.map(opt => `(${opt})( ${meta})`).join('|')
+
+          // Replace the '--opt VAR' sequences with just '--opt'.
+          return line.replace(new RegExp(matchOpts), (_, opt) => opt)
+        }
+        return line
+      })
+
+      return buffer
+    }
+
     // Replaces ArgumentParser's usual help formatter with one that supports multiple sections.
     // Also cleans up the output a bit.
     formatHelp() {
@@ -132,6 +167,9 @@ const makeArgObj = (opts) => {
             return this.hasArgument(this.longestArgument(choiceItem.name), line) ? `${line}\n${choiceSection.join('\n')}` : line
           })
         })
+
+        // Remove double metavars if they exist.
+        buffer = this.removeDoubleMetavars(buffer)
 
         // While we're at it, remove double empty lines.
         return removeUnnecessaryLines(buffer.join('\n'))
