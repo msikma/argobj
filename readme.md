@@ -4,11 +4,11 @@ This is a thin wrapper for the [`argparse`](https://github.com/nodeca/argparse) 
 
 ### Usage
 
-First, run `makeArgObj()` to create the parser object.
+First, run `argObj()` to create the parser object.
 
 ```js
-const makeArgObj = require('argobj')
-const parser = makeArgObj({
+const argObj = require('argobj')
+const parser = argObj({
   addHelp: true,
   description: `Suspendisse at sodales leo, in bibendum ex.`,
   longDescription: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac lectus lacinia, laoreet sem sit amet, imperdiet tellus. Etiam augue erat, elementum vel malesuada non, varius quis lectus. Phasellus quis sollicitudin dui, nec tristique ex.`,
