@@ -1,0 +1,12 @@
+{
+  "name": "argobj",
+  "version": "1.0.0",
+  "description": "Wrapper for argparse with some extras",
+  "main": "src/index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "argparse": "^1.0.10"
+  }
+}
