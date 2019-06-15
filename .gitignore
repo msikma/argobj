@@ -1,4 +1,16 @@
-# Node .gitignore file from <https://github.com/github/gitignore/blob/master/Node.gitignore>
+# Sourced from Github's .gitignores repo: <https://github.com/github/gitignore>
+
+# macOS
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Node
 
 # Logs
 logs
