@@ -1,6 +1,6 @@
 ## argobj
 
-This is a thin wrapper for the `[argparse](https://github.com/nodeca/argparse)` module, adding a few new features. Since `argparse` is a direct port of the [Python equivalent](https://docs.python.org/3/library/argparse.html), new features normally don't get added to it.
+This is a thin wrapper for the [`argparse`](https://github.com/nodeca/argparse) module, adding a few new features. Since `argparse` is a direct port of the [Python equivalent](https://docs.python.org/3/library/argparse.html), new features normally don't get added to it.
 
 ### Usage
 
