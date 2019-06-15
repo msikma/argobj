@@ -14,6 +14,7 @@ const parser = argObj({
   longDescription: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas ac lectus lacinia, laoreet sem sit amet, imperdiet tellus. Etiam augue erat, elementum vel malesuada non, varius quis lectus. Phasellus quis sollicitudin dui, nec tristique ex.`,
   noWrapping: false,
   ensurePeriod: false,
+  noDoubleMetavars: true,
   epilog: `For more information, see <https://michielsikma.com/>.`,
   version: '1.0.0'
 })
@@ -23,7 +24,8 @@ The constructor argument takes several new attributes:
 
 * `longDescription` - An optional extra block of text that gets added below the description
 * `noWrapping` - Turns off the text wrapping that normally gets done to description text
-* `ensurePeriod` - Ensures that `description` ends with a period - I use this when directly passing my `package.json`'s `description` field.
+* `ensurePeriod` - Ensures that `description` ends with a period - I use this when directly passing my `package.json`'s `description` field
+* `noDoubleMetavars` - Reduces multiple instances of an action's metavar to one to save space (changing e.g. `-a NAME, --author NAME` into `-a, --author NAME`)
 
 After the argparser object is instantiated, add any number of arguments.
 
