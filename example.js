@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const makeArgObj = require('./src/wrapper')
+const makeArgObj = require('./src/index')
 const parser = makeArgObj({
   addHelp: true,
   description: `Suspendisse at sodales leo, in bibendum ex.`,
