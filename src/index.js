@@ -22,6 +22,7 @@ const makeArgObj = (opts) => {
       // Ensure a period unless 'ensurePeriod' is explicitly false.
       this.parser = new ArgumentParser({ ...opts, description: opts.ensurePeriod !== false && opts.description ? ensurePeriod(opts.description) : opts.description })
       this.addLongDescription(opts.longDescription, opts.noWrapping)
+      this.helpFormatter = new HelpFormatter({ prog: this.parser.prog })
     }
 
     // Wrapper for ArgumentParser.addArgument().
@@ -71,23 +72,22 @@ const makeArgObj = (opts) => {
       this.parser.formatHelp = () => {
         // Here we do some messing around with the private ArgumentParser API in order to
         // get extra text to show up. You're never supposed to do that, but oh well.
-        const formatter = new HelpFormatter({ prog: this.parser.prog })
-        formatter.addUsage(this.parser.usage, this.parser._actions, this.parser._mutuallyExclusiveGroups)
-        formatter.addText(this.parser.description)
+        this.helpFormatter.addUsage(this.parser.usage, this.parser._actions, this.parser._mutuallyExclusiveGroups)
+        this.helpFormatter.addText(this.parser.description)
         if (longDescription) {
           // Add the long help text without filtering the text formatting.
-          formatter._addItem(str => str, [ldContent])
+          this.helpFormatter._addItem(str => str, [ldContent])
         }
         this.parser._actionGroups.forEach((actionGroup) => {
-          formatter.startSection(actionGroup.title)
-          formatter.addText(actionGroup.description)
-          formatter.addArguments(actionGroup._groupActions)
-          formatter.endSection()
+          this.helpFormatter.startSection(actionGroup.title)
+          this.helpFormatter.addText(actionGroup.description)
+          this.helpFormatter.addArguments(actionGroup._groupActions)
+          this.helpFormatter.endSection()
         });
         // Add epilogue without reformatting the whitespace.
         // Don't you DARE take away my linebreaks.
-        formatter._addItem(str => str, [this.parser.epilog])
-        const formatted = formatter.formatHelp()
+        this.helpFormatter._addItem(str => str, [this.parser.epilog])
+        const formatted = this.helpFormatter.formatHelp()
         return removeLines ? removeUnnecessaryLines(formatted) : formatted
       }
     }
@@ -121,8 +121,12 @@ const makeArgObj = (opts) => {
         this.choices.forEach(choiceItem => {
           let choiceSection = []
           const choices = choiceItem.choices.length
+          const indent = ' '.repeat(5)
+          // Determine the width at which the help strings are being printed.
+          // This corrects for the extra indentation we use in choice sections.
+          const width = Math.min(this.helpFormatter._actionMaxLength - 2, this.helpFormatter._maxHelpPosition - 4)
           for (let a = 0; a < choices; ++a) {
-            choiceSection.push(`     ${a === 0 ? '{' : ' '}${`${choiceItem.choices[a]}${a < choices - 1 ? ',' : '}'}`.padEnd(19)}${choiceItem.choicesHelp[a] ? choiceItem.choicesHelp[a] : ''}`)
+            choiceSection.push(`${indent}${a === 0 ? '{' : ' '}${`${choiceItem.choices[a]}${a < choices - 1 ? ',' : '}'}`.padEnd(width)}${choiceItem.choicesHelp[a] ? choiceItem.choicesHelp[a] : ''}`)
           }
           buffer = buffer.map(line => {
             return this.hasArgument(this.longestArgument(choiceItem.name), line) ? `${line}\n${choiceSection.join('\n')}` : line
