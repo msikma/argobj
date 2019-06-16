@@ -26,7 +26,7 @@ const makeArgObj = (opts) => {
 
       // Override things in the HelpFormatter depending on some options.
       // This limits metavars to one occurrence per line even with multiple argument hooks.
-      this.hackHelpFormatter(opts.noDoubleMetavar)
+      this.hackHelpFormatter(opts.noDoubleMetavars)
     }
 
     // Wrapper for ArgumentParser.addArgument().
@@ -52,8 +52,8 @@ const makeArgObj = (opts) => {
     }
 
     // Adds a wrapper for HelpFormatter._formatActionInvocation().
-    hackHelpFormatter(noDoubleMetavar) {
-      if (noDoubleMetavar) this.overrideFormatActionInvocation()
+    hackHelpFormatter(noDoubleMetavars) {
+      if (noDoubleMetavars) this.overrideFormatActionInvocation()
     }
 
     // Overrides the code that draws an action's options; e.g. '-a NAME, --author NAME'.
