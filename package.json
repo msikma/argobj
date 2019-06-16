@@ -1,6 +1,6 @@
 {
   "name": "argobj",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Wrapper for argparse with some extras",
   "main": "src/index.js",
   "keywords": [],
